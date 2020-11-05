@@ -44,7 +44,7 @@ country of Kenya.
 
 ```{r sc1}
 
-fit_mod <- stan_glm(reg_chg ~ treatment + poverty + treatment*poverty_n,
+fit_mod <- stan_glm(reg_chg ~ treatment*poverty_n,
          data = week_9,
          refresh = 0)
 
@@ -63,13 +63,43 @@ Write a sentence or two for each of these topics:
 
 * What would Wisdom suggest about the use of the `kenya` data to answer this question?
 
+The main thing we need to consider is whether January in this coming year is 
+very different from whenever this data was gathered.
+
 * Describe the ideal Preceptor Table.
+
+We would know reg_chg with or without the treatment for every community in 
+Kenya.
 
 * Graph the posterior probability distribution `reg_chg` if polling station 007/001 were to be assigned treatment in January.
 
+```{r sc2}
+
+new_obs = tibble(treatment = "local", poverty_n = -1.60835093)
+
+pp <- posterior_predict(fit_mod, newdata = new_obs) %>%
+  as_tibble() %>% 
+  mutate_all(as.numeric) 
+
+pp %>%
+  ggplot(aes(x = `1`)) +
+    geom_histogram(aes(y = after_stat(count/sum(count))),
+                   bins = 100,
+                   color = "white") +
+  labs(title = "Posterior Predictive Distribution",
+       subtitle = "Prediction if treatment was applied to polling station 007/001",
+       x = "Change in voter registration",
+       y = "Probability") +
+  geom_vline(xintercept = 0.04, color = "red")
+  
+mean(pp$`1` > 0.04)
+
+```
+
 * Answer the President's question.
 
-
+There is a 13.35% chance of an increase in registration of 4% if we were to give 
+polling station 007/001 the local treatment in January.
 
 
 ## Scene 3
