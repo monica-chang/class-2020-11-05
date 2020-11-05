@@ -33,11 +33,24 @@ week_9 <- kenya %>%
 
 * Write the math for this model.
 
+$$reg\_chg = \beta_0 + \beta_1x_{treat} + \beta_2x_{pov_n, i} + \beta_3x_{treat*pov_n, i} + \epsilon_i$$
+
 * Describe the population for which you are creating the model.
 
-* Fit the  model and interpret the coefficients. Focus on the coefficient of the interaction term.
+The population for which we are creating the model is every voter within the
+country of Kenya.
 
+* Fit the model and interpret the coefficients. Focus on the coefficient of the interaction term.
 
+```{r sc1}
+
+fit_mod <- stan_glm(reg_chg ~ treatment + poverty + treatment*poverty_n,
+         data = week_9,
+         refresh = 0)
+
+print(fit_mod, digits = 4)
+
+```
 
 
 ## Scene 2
